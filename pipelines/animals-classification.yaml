@@ -1,3 +1,4 @@
+# change inputs: az ml job create --file .\pipelines\animals-classification.yaml --set inputs.train_test_split_factor=25  inputs.epochs=10 
 $schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
 
 type: pipeline
@@ -82,7 +83,7 @@ jobs:
     component: azureml://registries/azureml/components/register_model/versions/0.0.9
     inputs: 
       model_name: animals_classification
-      model_type: mlflow_model
+      model_type: custom_model
       model_path: ${{parent.jobs.training.outputs.output_folder}}
     
     outputs:
