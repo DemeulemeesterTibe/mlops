@@ -1,3 +1,4 @@
+name: aml-Pillow
 channels:
   - conda-forge
 dependencies:
@@ -13,4 +14,3 @@ dependencies:
     - mlflow==1.26.1
     - azureml-mlflow==1.42.0
     - Pillow==10.0.1
-name: aml-Pillow
