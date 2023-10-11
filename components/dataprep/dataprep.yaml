@@ -1,0 +1,21 @@
+# Execute as: az ml component create --file .\labo3\components\dataprep\dataprep.yaml
+name: data_prep_image_resize
+version: 1.0.0
+display_name: Data preparation, Image Resizing
+is_deterministic: True
+type: command
+description: Reads a data asset of images and preprocesses them by resizing them to 64 to 64.
+inputs:
+  data:
+    type: uri_folder
+    optional: False
+outputs:
+  output_data:
+    type: uri_folder
+# code: azureml:/subscriptions/9dfa7b7b-77cd-4d7c-bcab-e0756bdf40a9/resourceGroups/mlops-labo3-tibe/providers/Microsoft.MachineLearningServices/workspaces/mlops/codes/c8cda70a-1947-4e61-a233-cb929c90f0f2/versions/1
+code: ./code
+environment: azureml:/subscriptions/9dfa7b7b-77cd-4d7c-bcab-e0756bdf40a9/resourceGroups/mlops-labo3-tibe/providers/Microsoft.MachineLearningServices/workspaces/mlops/environments/aml-Tensorflow-Pillow/versions/2
+# environment: azureml:/aml-Pillow:1
+resources:
+  instance_count: 1
+command: 'python dataprep.py --data ${{inputs.data}} --output_data ${{outputs.output_data}}'
