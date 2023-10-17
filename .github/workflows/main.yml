@@ -33,7 +33,7 @@ jobs:
             az configure --defaults group=$GROUP workspace=$WORKSPACE location=$LOCATION
             az ml compute create --file ./environment/compute.yaml
             az ml job create --file ./pipelines/animals-classification.yaml --set name=animals-classification-${{ github.sha }}-${{ github.run_id }} --stream
-            VERSION = $(az ml model list -n animals_classification --query '[0].version')
+            VERSION = $(az ml model list -n animals-classification --query '[0].version')
             echo "Latest version is $VERSION"
             echo "::set-output name=latest_version::$VERSION"
             az ml compute stop -n mlopsc-cli
@@ -44,4 +44,4 @@ jobs:
           inlineScript: |
             az extension add --name ml -y
             az configure --defaults group=$GROUP workspace=$WORKSPACE location=$LOCATION
-            az ml model download --name animals_classification --version ${{ steps.azure-ml-pipeline.outputs.latest_version }} --download-path ./model
+            az ml model download --name animals-classification --version ${{ steps.azure-ml-pipeline.outputs.latest_version }} --download-path ./model
