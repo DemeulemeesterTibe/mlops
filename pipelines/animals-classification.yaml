@@ -15,7 +15,7 @@ outputs:
     type: uri_folder
 
 settings:
-  default_compute: azureml:mlopsci
+  default_compute: azureml:mlopsc-cli
 
 jobs: 
   data_prep_pandas:
