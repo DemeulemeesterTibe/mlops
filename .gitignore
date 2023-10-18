@@ -2,3 +2,5 @@ model
 *.zip
 
 actions-runner/*
+
+inference/__pycache__/

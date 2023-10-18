@@ -1,34 +1,36 @@
-from fastapi import FastAPI, UploadFile, File
-from keras.models import load_model
-import cv2
 import numpy as np
+from PIL import Image
+from tensorflow.keras.models import load_model
+from fastapi import FastAPI, File, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=['*'],
+    allow_credentials=True,
+    allow_methods=['*'],
+    allow_headers=['*'],
+)
 
-model_path = 'animals_classification'
-model = load_model(model_path)
+ANIMALS = ['Cat', 'Dog', 'Panda']
 
-def preprocess_image(image):
-    resized_image = cv2.resize(image, (64, 64))
-    preprocessed_image = np.expand_dims(resized_image, axis=0)
-    return preprocessed_image
+model = load_model('animal-cnn')
 
-@app.post("/predict/")
-async def predict(file: UploadFile):
-    # Read and preprocess the uploaded image
-    contents = await file.read()
-    nparr = np.frombuffer(contents, np.uint8)
-    image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-    preprocessed_image = preprocess_image(image)
+@app.post('/upload/image')
+async def uploadImage(img: UploadFile = File(...)):
+    original_image = Image.open(img.file)
+    original_image = original_image.resize((64, 64))
+    images_to_predict = np.expand_dims(np.array(original_image), axis=0)
+    predictions = model.predict(images_to_predict)
+    classifications = predictions.argmax(axis=1)
 
-    # Make a prediction using the Keras model
-    prediction = model.predict(preprocessed_image)
-    predicted_class = np.argmax(prediction[0])
+    return ANIMALS[classifications.tolist()[0]]
 
-    return {"predicted_class": predicted_class}
+@app.get('/healthcheck')
+def healthcheck():
+    return {'status': 'Healty'}
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     import uvicorn
-
-    # Run the FastAPI app using Uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run("main:app", host='0.0.0.0', port=8000, reload=True)
