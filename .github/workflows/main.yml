@@ -8,19 +8,23 @@ on:
       create_compute:
         description: 'Create compute'
         required: false
-        default: 'true'
+        type: boolean
+        default: true
       train_model:
         description: 'Train model'
         required: false
-        default: 'true'
+        type: boolean
+        default: true
       skip_training_pipeline:
         description: 'Skip training pipeline'
         required: false
-        default: 'false'
+        type: boolean
+        default: false
       deploy_model:
         description: 'Skip training pipeline'
         required: false
-        default: 'true'
+        type: boolean
+        default: true
 
 env:
   GROUP: mlops-labo3-tibe
@@ -143,7 +147,7 @@ jobs:
         with:
           registry: ghcr.io
           username: demeulemeestertibe
-          password: ${{ secrets.DOCKER_PWD }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       # download artifacts
       - name: Download API code for Docker
