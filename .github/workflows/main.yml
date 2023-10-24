@@ -38,6 +38,7 @@ jobs:
       - name: 'Start compute'
         uses: azure/CLI@v1
         id: azure-ml-compute-start
+        if: ${{ env.CREATE_COMPUTE != 'true' }}
         with:
           azcliversion: 2.53.0
           inlineScript: |
@@ -84,16 +85,36 @@ jobs:
 
       - name: Move model
         run: |
-            ls inference
+            ls inference/animals-classification/INPUT_model_path
             mv inference/animals-classification/INPUT_model_path/animal-cnn inference 
 
-      - name: Build Docker file
-        run: |
-            docker build -t demeulemeestertibe/mlops-animals-api:${{ github.run_id }} ./inference
-            docker login --username demeulemeestertibe --password ${{ secrets.DOCKER_PWD }}
-            docker push demeulemeestertibe/mlops-animals-api:${{ github.run_id }}
-            
-      - name: Build nad push to GHCR
-        run: |
-            docker tag demeulemeestertibe/mlops-animals-api 
-            docker push ghcr.io/demeulemeestertibe/mlops-animals-api
+      - name: Gather Docker Meta Information
+        id: docker-metadata
+        uses: docker/metadata-action@v3
+        with:
+          # list of Docker images to use as base name for tags
+          images: |
+            ghcr.io/demeulemeestertibe/mlops-2.0
+          # generate Docker tags based on the following events/attributes:
+          # The GitHub Branch
+          # The GitHub SHA
+          # More info: https://github.com/docker/build-push-action/blob/master/docs/advanced/tags-labels.md
+          tags: |
+            type=ref,event=branch
+            type=sha
+      
+      # Enter your GITHUB Token here!
+      - name: Login to GHCR
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: demeulemeestertibe
+          password: ${{ secrets.DOCKER_PWD }}
+
+      - name: Docker Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.docker-metadata.outputs.tags }}
