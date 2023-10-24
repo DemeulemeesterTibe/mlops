@@ -83,10 +83,10 @@ jobs:
             az configure --defaults group=$GROUP workspace=$WORKSPACE location=$LOCATION
             az ml model download --name animals-classification --download-path ./inference --version "${{ steps.azure-ml-pipeline.outputs.latest_version }}" 
 
-      - name: Move model
-        run: |
-            ls inference/animals-classification/INPUT_model_path
-            mv inference/animals-classification/INPUT_model_path/animal-cnn inference 
+      # - name: Move model
+      #   run: |
+      #       ls inference/animals-classification/INPUT_model_path
+      #       mv inference/animals-classification/INPUT_model_path/animal-cnn inference 
 
       - name: Gather Docker Meta Information
         id: docker-metadata
