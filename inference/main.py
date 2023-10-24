@@ -3,6 +3,7 @@ from PIL import Image
 from tensorflow.keras.models import load_model
 from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+import os
 
 app = FastAPI()
 app.add_middleware(
@@ -14,8 +15,9 @@ app.add_middleware(
 )
 
 ANIMALS = ['Cat', 'Dog', 'Panda']
-
-model = load_model('animal-cnn')
+# model_path = os.path.join("animal-cnn")
+model_path = os.path.join("inference/animals-classification/INPUT_model_path/animal-cnn")
+model = load_model(model_path)
 
 @app.post('/upload/image')
 async def uploadImage(img: UploadFile = File(...)):
