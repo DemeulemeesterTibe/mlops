@@ -105,6 +105,11 @@ jobs:
     # only run if azure-pipeline is succeeded or skipped
     if: ${{ needs.azure-pipeline.result == 'success' }} || ${{ needs.azure-pipeline.result == 'skipped' }}
     steps:
+      - name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
       - name: Download model
         uses: azure/CLI@v1
         with:
@@ -126,6 +131,11 @@ jobs:
     # only run if download is succeeded or skipped AND if the deploy_model input is true
     if:  ${{ ( needs.download.result == 'success'  ||  needs.download.result == 'skipped'  ) &&  inputs.deploy_model  }} 
     steps:
+      - name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          
       - name: Gather Docker Meta Information
         id: docker-metadata
         uses: docker/metadata-action@v3
