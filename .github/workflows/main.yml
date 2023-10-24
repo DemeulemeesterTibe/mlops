@@ -13,6 +13,14 @@ on:
         description: 'Train model'
         required: false
         default: 'true'
+      skip_training_pipeline:
+        description: 'Skip training pipeline'
+        required: false
+        default: 'false'
+      deploy_model:
+        description: 'Skip training pipeline'
+        required: false
+        default: 'true'
 
 env:
   GROUP: mlops-labo3-tibe
@@ -20,9 +28,12 @@ env:
   LOCATION: westeurope
   CREATE_COMPUTE: ${{ github.event.inputs.create_compute }}
   TRAIN_MODEL: ${{ github.event.inputs.train_model }}
+  SKIP_TRAINING_PIPELINE: ${{ github.event.inputs.skip_training_pipeline }}
+  DEPLOY_MODEL: ${{ github.event.inputs.deploy_model }}
 
 jobs:
   azure-pipeline:
+    if: ${{ inputs.skip_training_pipeline == 'false' }}
     runs-on: ubuntu-latest
     # runs-on: self-hosted
     steps:
@@ -84,6 +95,12 @@ jobs:
             az ml compute stop -n mlopsc-cli
         continue-on-error: true
 
+  download:
+    runs-on: ubuntu-latest
+    needs: azure-pipeline
+    # only run if azure-pipeline is succeeded or skipped
+    if: ${{ needs.azure-pipeline.result == 'success' }} || ${{ needs.azure-pipeline.result == 'skipped' }}
+    steps:
       - name: Download model
         uses: azure/CLI@v1
         with:
@@ -93,16 +110,18 @@ jobs:
             az configure --defaults group=$GROUP workspace=$WORKSPACE location=$LOCATION
             az ml model download --name animals-classification --download-path ./inference --version "${{ steps.azure-ml-pipeline.outputs.latest_version }}" 
 
-      # - name: Move model
-      #   run: |
-      #       ls inference/animals-classification/INPUT_model_path
-      #       mv inference/animals-classification/INPUT_model_path/animal-cnn inference 
       # - name: Move model to docker
       #   run: |
       #       ls inference/animals-classification/INPUT_model_path
       #       mv inference/animals-classification/INPUT_model_path/animal-cnn inference 
       #       mv inference/animals-classification/INPUT_model_path/animal-cnn inference/animal-cnn
 
+  deploy:
+    needs: download
+    runs-on: ubuntu-latest
+    # only run if download is succeeded or skipped AND if the deploy_model input is true
+    if:  ${{ ( needs.download.result == 'success'  ||  needs.download.result == 'skipped'  ) &&  inputs.deploy_model  }} 
+    steps:
       - name: Gather Docker Meta Information
         id: docker-metadata
         uses: docker/metadata-action@v3

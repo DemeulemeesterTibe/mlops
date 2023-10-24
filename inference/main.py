@@ -16,7 +16,8 @@ app.add_middleware(
 
 ANIMALS = ['Cat', 'Dog', 'Panda']
 # model_path = os.path.join("animal-cnn")
-model_path = os.path.join("inference/animals-classification/INPUT_model_path/animal-cnn")
+# model_path = os.path.join("inference/animals-classification/INPUT_model_path/animal-cnn")
+model_path = os.path.join("inference", "animals-classification", "INPUT_model_path", "animal-cnn")
 model = load_model(model_path)
 
 @app.post('/upload/image')
