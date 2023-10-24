@@ -49,6 +49,7 @@ jobs:
             az ml model download --name animals-classification --download-path ./inference --version "${{ steps.azure-ml-pipeline.outputs.latest_version }}" 
       - name: Move model
         run: |
+            ls inference
             mv inference/animals-classification/INPUT_model_path/animal-cnn inference 
       - name: Build Docker file
         run: |
