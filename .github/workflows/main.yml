@@ -33,7 +33,7 @@ env:
 
 jobs:
   azure-pipeline:
-    if: ${{ inputs.skip_training_pipeline == 'false' }}
+    if: ${{ inputs.skip_training_pipeline != 'false' }}
     runs-on: ubuntu-latest
     # runs-on: self-hosted
     steps:
