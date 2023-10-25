@@ -7,7 +7,7 @@ on:
 
 jobs:
   start:
-    uses: ./.github/workflows/main.yml
+    uses: ./.github/workflows/main.yaml
     with:
       create_compute: true
       train_model: true
