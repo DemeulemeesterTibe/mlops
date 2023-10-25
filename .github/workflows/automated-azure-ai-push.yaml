@@ -1,0 +1,15 @@
+name: Azure ML Automated Pushing pipeline
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+    start:
+        uses: ./.github/workflows/main.yml
+        with:
+            create_compute: true
+            train_model: true
+            skip_training_pipeline: false
+            deploy_model: true

@@ -85,7 +85,7 @@ jobs:
             az configure --defaults group=$GROUP workspace=$WORKSPACE location=$LOCATION
             az ml job create --file ./pipelines/animals-classification.yaml --set name=animals-classification-${{ github.sha }}-${{ github.run_id }} --stream
             echo "Pipeline Done"
-            VERSION=$(az ml model list -n animals-classification --query '[0].version')
+            VERSION=$(az ml model list -n animals-classification --query '[0].version -o tsv')
             echo "Latest version is $VERSION"
             echo "::set-output name=latest_version::$VERSION"
 
@@ -120,7 +120,7 @@ jobs:
           inlineScript: |
             az extension add --name ml -y
             az configure --defaults group=$GROUP workspace=$WORKSPACE location=$LOCATION
-            VERSION=$(az ml model list -n animals-classification --query '[0].version')
+            VERSION=$(az ml model list -n animals-classification --query '[0].version' -o tsv)
             echo "Latest version is $VERSION"
             echo "::set-output name=latest_version::$VERSION"
             az ml model download --name animals-classification --download-path ./inference --version $VERSION
