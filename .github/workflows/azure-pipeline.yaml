@@ -60,7 +60,8 @@ env:
 jobs:
   azure-pipeline:
     if: ${{ inputs.skip_training_pipeline != 'false' }}
-    runs-on: ubuntu-latest
+    # runs-on: ubuntu-latest
+    runs-on: self-hosted
     outputs:
       ai-model-version: ${{ steps.azure-ml-pipeline.outputs.latest_version }}
     # runs-on: self-hosted
@@ -125,11 +126,16 @@ jobs:
 
   
   download:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
+    # runs-on: ubuntu-latest
+    # runs-on: ubuntu-latest
     needs: azure-pipeline
     # only run if azure-pipeline is succeeded or skipped
     if: ${{ needs.azure-pipeline.result == 'success' }} || ${{ needs.azure-pipeline.result == 'skipped' }}
     steps:
+      - name: 'Checkout out repository'
+        uses: actions/checkout@v4
+
       - name: 'Az CLI login'
         uses: azure/login@v1
         with:
