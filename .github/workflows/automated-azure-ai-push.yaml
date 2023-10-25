@@ -3,7 +3,7 @@ name: Azure ML Automated Pushing pipeline
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   start:
