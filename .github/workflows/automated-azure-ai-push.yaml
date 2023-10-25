@@ -7,7 +7,7 @@ on:
 
 jobs:
   start:
-    uses: ./.github/workflows/azure-pipeline.yaml
+    uses: .github/workflows/azure-pipeline.yaml
     with:
       create_compute: true
       train_model: true
