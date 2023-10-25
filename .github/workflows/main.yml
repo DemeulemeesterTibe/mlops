@@ -1,8 +1,8 @@
 name: MLOps Azure animals classification pipeline
 
 on:
-  push:
-    branches: [ main ]
+  # push:
+  #   branches: [ main ]
   workflow_dispatch:
     inputs:
       create_compute:
@@ -54,7 +54,7 @@ jobs:
       - name: 'Create compute'
         uses: azure/CLI@v1
         id: azure-ml-compute
-        if: ${{ github.event.inputs.create_compute }}
+        if: ${{ inputs.create_compute }}
         with:
           azcliversion: 2.53.0
           inlineScript: |
@@ -125,13 +125,13 @@ jobs:
             echo "::set-output name=latest_version::$VERSION"
             az ml model download --name animals-classification --download-path ./inference --version $VERSION
 
-      - name: Download model
-        uses: azure/CLI@v1
-        with:
-          azcliversion: 2.53.0
-          inlineScript: |
-            az extension add --name ml -y
-            az configure --defaults group=$GROUP workspace=$WORKSPACE location=$LOCATION
+      # - name: Download model
+      #   uses: azure/CLI@v1
+      #   with:
+      #     azcliversion: 2.53.0
+      #     inlineScript: |
+      #       az extension add --name ml -y
+      #       az configure --defaults group=$GROUP workspace=$WORKSPACE location=$LOCATION
             
       
       - name: Upload api code
