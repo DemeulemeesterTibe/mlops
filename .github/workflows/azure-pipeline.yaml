@@ -3,6 +3,28 @@ name: MLOps Azure animals classification pipeline
 on:
   # push:
   #   branches: [ main ]
+  workflow_call:
+    inputs:
+      create_compute:
+        description: 'Create compute'
+        required: false
+        type: boolean
+        default: true
+      train_model:
+        description: 'Train model'
+        required: false
+        type: boolean
+        default: true
+      skip_training_pipeline:
+        description: 'Skip training pipeline'
+        required: false
+        type: boolean
+        default: false
+      deploy_model:
+        description: 'deploy model'
+        required: false
+        type: boolean
+        default: true
   workflow_dispatch:
     inputs:
       create_compute:
