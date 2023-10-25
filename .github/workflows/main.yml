@@ -122,7 +122,7 @@ jobs:
             az configure --defaults group=$GROUP workspace=$WORKSPACE location=$LOCATION
             VERSION=$(az ml model list -n animals-classification --query '[0].version')
             echo "Latest version is $VERSION"
-            az ml model download --name animals-classification --download-path ./inference --version "${{ steps.azure-pipeline.outputs.ai-model-version }}" 
+            az ml model download --name animals-classification --download-path ./inference --version $VERSION" 
 
       - name: Download model
         uses: azure/CLI@v1
